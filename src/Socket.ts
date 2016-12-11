@@ -37,6 +37,9 @@ class NotInThisBrowserError extends errors.NotImplementedError {
   }
 }
 
+/**
+ * @since Chrome 33
+ */
 export class Socket extends EventEmitter implements dgram.Socket {
   private _chromeSocketId: number | null = null
   private _firefoxSocket: navigator.UDPSocket | null = null
@@ -81,12 +84,25 @@ export class Socket extends EventEmitter implements dgram.Socket {
     }
   }
 
-  send (msg: Buffer | string | Buffer[] | string[], port: number, address: string, callback?: (errorOrBytes: Error | number) => void): void
-  send (msg: Buffer, offset: number, length: number, port: number, address: string, callback?: (errorOrBytes: Error | number) => void): void
-  send (msg: Buffer | string | Buffer[] | string[], portOrOffset: number, addressOrLength: string | number, callbackOrPort?: Function | number, address?: string, callback?: (errorOrBytes: Error | number) => void): void {
-    let length: number
-    let offset: number
-    let port: number
+  send (msg: Buffer | string | Buffer[] | string[],
+        port: number,
+        address: string,
+        callback?: (errorOrBytes: Error | number) => void): void
+  send (msg: Buffer,
+        offset: number,
+        length: number,
+        port: number,
+        address: string,
+        callback?: (errorOrBytes: Error | number) => void): void
+  send (msg: Buffer | string | Buffer[] | string[],
+        portOrOffset: number,
+        addressOrLength: string | number,
+        callbackOrPort?: Function | number,
+        address: string = 'localhost',
+        callback?: (errorOrBytes: Error | number) => void): void {
+    let length: number | null = null
+    let offset: number = 0
+    let port: number = 0
 
     if (typeof addressOrLength === 'string') {
       port = portOrOffset
@@ -99,9 +115,18 @@ export class Socket extends EventEmitter implements dgram.Socket {
     }
 
     if (browserUDP === UDPBrowserTypes.ChromeSocketsUDP) {
-      if (!this._chromeSocketId) throw new errors.InvalidOperationError('Socket not created')
-      if (!this._addressInfo) throw new errors.InvalidOperationError('Socket not bound')
-      if (Array.isArray(msg) && msg.length === 0) throw new errors.ArgumentError('Array argument must have at least one item')
+      if (!this._chromeSocketId) {
+        throw new errors.InvalidOperationError('Socket not created')
+      }
+
+      if (!this._addressInfo) {
+        this._addressInfo = {address: '0.0.0.0', 'port': 0, 'family': 'udp4'}
+        this.bind(this._addressInfo.port, this._addressInfo.address)
+      }
+
+      if (Array.isArray(msg) && msg.length === 0) {
+        throw new errors.ArgumentError('Array argument must have at least one item')
+      }
 
       if (Array.isArray(msg)) {
         if (typeof msg[0] === 'string') {
@@ -115,6 +140,10 @@ export class Socket extends EventEmitter implements dgram.Socket {
 
       if (typeof msg === 'string') {
         msg = Buffer.from(msg)
+      }
+
+      if (length) {
+        msg = msg.slice(offset, length)
       }
 
       chrome.sockets.udp.send(
@@ -171,9 +200,14 @@ export class Socket extends EventEmitter implements dgram.Socket {
    *                                and attempted port sharing results in an
    *                                error.
    */
-  bind (port?: number, address?: string, callback?: () => void): void
-  bind (options: dgram.BindOptions, callback?: Function): void
-  bind (portOrOptions?: number | dgram.BindOptions, addressOrCallback?: string | Function, callback?: () => void): void {
+  bind (port?: number,
+        address?: string,
+        callback?: () => void): void
+  bind (options: dgram.BindOptions,
+        callback?: Function): void
+  bind (portOrOptions?: number | dgram.BindOptions,
+        addressOrCallback?: string | Function,
+        callback?: () => void): void {
     let address: string
     let port: number
     let exclusive: boolean
@@ -195,7 +229,10 @@ export class Socket extends EventEmitter implements dgram.Socket {
     }
 
     if (browserUDP === UDPBrowserTypes.ChromeSocketsUDP) {
-      if (!this._chromeSocketId) throw new errors.InvalidOperationError('Socket not created')
+      if (!this._chromeSocketId) {
+        throw new errors.InvalidOperationError('Socket not created')
+      }
+
       chrome.sockets.udp.bind(
         this._chromeSocketId,
         address,
@@ -223,7 +260,10 @@ export class Socket extends EventEmitter implements dgram.Socket {
    */
   close (callback?: () => void): void {
     if (browserUDP === UDPBrowserTypes.ChromeSocketsUDP) {
-      if (!this._chromeSocketId) throw new errors.InvalidOperationError('Socket not created')
+      if (!this._chromeSocketId) {
+        throw new errors.InvalidOperationError('Socket not created')
+      }
+
       chrome.sockets.udp.close(this._chromeSocketId, () => {
         if (callback) {
           this.addListener('close', callback)
@@ -249,11 +289,15 @@ export class Socket extends EventEmitter implements dgram.Socket {
   }
 
   /**
-   * Sets or clears the SO_BROADCAST socket option. When set to true, UDP
-   * packets may be sent to a local interface's broadcast address.
+   * When set to true, UDP packets may be sent to a local interface's broadcast
+   * address.
+   *
+   * @since Chrome 44
    */
   setBroadcast (flag: boolean): void {
-    if (!flag) throw new errors.ArgumentNullError('setBroadcast requires an argument')
+    if (!flag) {
+      throw new errors.ArgumentNullError('setBroadcast requires an argument')
+    }
 
     if (browserUDP === UDPBrowserTypes.ChromeSocketsUDP) {
       if (!this._chromeSocketId) throw new errors.InvalidOperationError('Socket not created')
@@ -276,7 +320,9 @@ export class Socket extends EventEmitter implements dgram.Socket {
    * is 64 but can vary.
    */
   setTTL (ttl: number): void {
-    if (!ttl) throw new errors.ArgumentNullError('setTTL requires an argument')
+    if (!ttl) {
+      throw new errors.ArgumentNullError('setTTL requires an argument')
+    }
 
     if (ttl < 1 || ttl > 255) {
       throw new errors.RangeError('ttl for setTTL should be between 1 and 255.')
@@ -301,7 +347,9 @@ export class Socket extends EventEmitter implements dgram.Socket {
    * between 0 and 255. The default on most systems is 1 but can vary.
    */
   setMulticastTTL (ttl: number): void {
-    if (!ttl) throw new errors.ArgumentNullError('setMulticastTTL requires an argument')
+    if (!ttl) {
+      throw new errors.ArgumentNullError('setMulticastTTL requires an argument')
+    }
 
     if (!ttl || ttl < 1 || ttl > 255) {
       throw new errors.RangeError('ttl for setTTL should be between 1 and 255.')
@@ -325,7 +373,9 @@ export class Socket extends EventEmitter implements dgram.Socket {
    * multicast packets will also be received on the local interface.
    */
   setMulticastLoopback (flag: boolean): void {
-    if (!flag) throw new errors.ArgumentNullError('setMulticastLoopback requires an argument')
+    if (!flag) {
+      throw new errors.ArgumentNullError('setMulticastLoopback requires an argument')
+    }
 
     if (browserUDP === UDPBrowserTypes.ChromeSocketsUDP) {
       if (!this._chromeSocketId) throw new errors.InvalidOperationError('Socket not created')
@@ -354,7 +404,9 @@ export class Socket extends EventEmitter implements dgram.Socket {
    *                           nothing.
    */
   addMembership (multicastAddress: string, multicastInterface?: string): void {
-    if (!multicastAddress) throw new errors.ArgumentNullError('An address must be provided')
+    if (!multicastAddress) {
+      throw new errors.ArgumentNullError('An address must be provided')
+    }
 
     if (browserUDP === UDPBrowserTypes.ChromeSocketsUDP) {
       if (!this._chromeSocketId) throw new errors.InvalidOperationError('Socket not created')
@@ -377,7 +429,9 @@ export class Socket extends EventEmitter implements dgram.Socket {
    *                           nothing.
    */
   dropMembership (multicastAddress: string, multicastInterface?: string): void {
-    if (!multicastAddress) throw new errors.ArgumentNullError('An address must be provided')
+    if (!multicastAddress) {
+      throw new errors.ArgumentNullError('An address must be provided')
+    }
 
     if (browserUDP === UDPBrowserTypes.FirefoxUDP) {
       throw new errors.NotImplementedError('Method not implemented in Firefox.')
