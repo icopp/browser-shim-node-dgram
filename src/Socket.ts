@@ -1,8 +1,9 @@
 /// <reference path='../typings/chrome.d.ts'/>
+/// <reference path='../typings/node-common-errors.d.ts'/>
 
 import {EventEmitter} from 'events'
 import * as bowser from 'bowser'
-import * as errors from 'errors'
+import * as errors from 'node-common-errors'
 import * as dgram from 'dgram'
 
 enum UDPBrowserTypes {

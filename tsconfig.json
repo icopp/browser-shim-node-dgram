@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "module": "commonjs",
-    "outDir": "dist/",
-    "strictNullChecks": true,
-    "target": "ES5"
+    "noImplicitAny": true,
+    "outDir": "built",
+    "strictNullChecks": true
   }
 }

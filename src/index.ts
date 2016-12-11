@@ -1,11 +1,10 @@
 /// <reference path='../typings/chrome.d.ts'/>
-/// <reference path='../typings/errors.d.ts'/>
 /// <reference path='../typings/firefox.d.ts'/>
+/// <reference path='../node_modules/@types/node/index.d.ts'/>
 /// <reference types='chrome/chrome-app'/>
 
 let Buffer = require('buffer/').Buffer
 import {Socket} from './Socket'
-import * as dgram from 'dgram'
 
 /**
  * Creates a dgram.Socket object of the specified type. Once the socket is

@@ -1,17 +1,24 @@
-declare module 'errors' {
-    export function log(err: Error, message?: string)
-    export function prependCurrentStack(err: Error)
+/**
+ * This is just a workaround for not being able to explicitly reference the
+ * global scope.
+ */
+declare class GlobalError extends Error {}
+
+declare module 'node-common-errors' {
+    export function log(err: Error, message?: string): Error
+    export function logError(err: Error, cb: Function): void
+    export function prependCurrentStack(err: Error): Error
 
     namespace helpers {
         export function generateClass(name: string, options?: {extends: Error, globalize: boolean, args: string[], generateMessage: () => string}): Function
     }
 
     namespace middleware {
-        export function crashProtector()
-        export let errorHandler
+        export function crashProtector(errorHandler: (err: Error, req: Express.Request, res: Express.Response) => void): void
+        export function errorHandler(err: Error, req: Express.Request, res: Express.Response, next: Function): void
     }
 
-    export class Error {
+    export class Error extends GlobalError {
         constructor(entityName: string, inner_error?: Error)
     }
 
