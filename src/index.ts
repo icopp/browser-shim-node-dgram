@@ -7,13 +7,7 @@ let Buffer = require('buffer/').Buffer
 import {Socket} from './Socket'
 
 /**
- * Creates a dgram.Socket object of the specified type. Once the socket is
- * created, calling socket.bind() will instruct the socket to begin listening
- * for datagram messages. When address and port are not passed to socket.bind()
- * the method will bind the socket to the "all interfaces" address on a random
- * port (it does the right thing for both udp4 and udp6 sockets). The bound
- * address and port can be retrieved using socket.address().address and
- * socket.address().port.
+ * Creates a Socket object of the specified type.
  *
  * @param type     The type argument can be either udp4 or udp6.
  * @param callback An optional callback function can be passed which is added as
