@@ -29,6 +29,14 @@ if (bowser.firefox) {
   }
 }
 
+class NotInThisBrowserError extends errors.NotImplementedError {
+  constructor (message?: string, inner_error?: Error) {
+    message = 'Method not implemented in this browser' + message ? ': ' + message : ''
+
+    super(message, inner_error)
+  }
+}
+
 export class Socket extends EventEmitter implements dgram.Socket {
   private _chromeSocketId: number | null = null
   private _firefoxSocket: navigator.UDPSocket | null = null
@@ -206,7 +214,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
       return
     }
 
-    throw new errors.NotImplementedError('No available ways to bind.')
+    throw new NotInThisBrowserError()
   }
 
   /**
@@ -225,7 +233,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
       return
     }
 
-    throw new errors.NotImplementedError('Method not implemented in this browser')
+    throw new NotInThisBrowserError()
   }
 
   /**
@@ -253,7 +261,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
       return
     }
 
-    throw new errors.NotImplementedError('Method not implemented in this browser')
+    throw new NotInThisBrowserError()
   }
 
   /**
@@ -279,7 +287,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
       throw new errors.NotImplementedError('Method not implemented in Chrome.')
     }
 
-    throw new errors.NotImplementedError('Method not implemented in this browser')
+    throw new NotInThisBrowserError()
   }
 
   /**
@@ -309,7 +317,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
       return
     }
 
-    throw new errors.NotImplementedError('Method not implemented in this browser')
+    throw new NotInThisBrowserError()
   }
 
   /**
@@ -336,7 +344,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
       return
     }
 
-    throw new errors.NotImplementedError('Method not implemented in this browser')
+    throw new NotInThisBrowserError()
   }
 
   /**
@@ -358,7 +366,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
       return
     }
 
-    throw new errors.NotImplementedError('Method not implemented in this browser')
+    throw new NotInThisBrowserError()
   }
 
   /**
@@ -385,7 +393,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
       return
     }
 
-    throw new errors.NotImplementedError('Method not implemented in this browser')
+    throw new NotInThisBrowserError()
   }
 
   ref(): this {
