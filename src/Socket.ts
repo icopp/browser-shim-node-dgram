@@ -1,10 +1,10 @@
 /// <reference path='../typings/chrome.d.ts'/>
 /// <reference path='../typings/node-common-errors.d.ts'/>
+/// <reference types='node'/>
 
 import {EventEmitter} from 'events'
 import * as bowser from 'bowser'
 import * as errors from 'node-common-errors'
-import * as dgram from 'dgram'
 
 enum UDPBrowserTypes {
   ChromeSocketUDP,
@@ -37,14 +37,37 @@ class NotInThisBrowserError extends errors.NotImplementedError {
   }
 }
 
+export interface RemoteInfo {
+  address: string
+  family: string
+  port: number
+}
+
+export interface AddressInfo {
+  address: string
+  family: string
+  port: number
+}
+
+export interface BindOptions {
+  port: number
+  address?: string
+  exclusive?: boolean
+}
+
+export interface SocketOptions {
+  type: 'udp4' | 'udp6'
+  reuseAddr?: boolean
+}
+
 /**
  * @since Chrome 33
  */
-export class Socket extends EventEmitter implements dgram.Socket {
+export class Socket extends EventEmitter {
   private _chromeSocketId: number | null = null
   private _firefoxSocket: navigator.UDPSocket | null = null
 
-  private _addressInfo: dgram.AddressInfo | null = null
+  private _addressInfo: AddressInfo | null = null
   private _selfBroadcast: boolean = false
   private _selfMulticast: boolean = false
 
@@ -203,9 +226,9 @@ export class Socket extends EventEmitter implements dgram.Socket {
   bind (port?: number,
         address?: string,
         callback?: () => void): void
-  bind (options: dgram.BindOptions,
+  bind (options: BindOptions,
         callback?: Function): void
-  bind (portOrOptions?: number | dgram.BindOptions,
+  bind (portOrOptions?: number | BindOptions,
         addressOrCallback?: string | Function,
         callback?: () => void): void {
     let address: string
@@ -280,12 +303,12 @@ export class Socket extends EventEmitter implements dgram.Socket {
    * Returns an object containing the address information for a socket. For UDP
    * sockets, this object will contain address, family and port properties.
    */
-  address (): dgram.AddressInfo {
+  address (): AddressInfo {
     if (!this._addressInfo) {
       throw new errors.InvalidOperationError('No address info is available')
     }
 
-    return this._addressInfo as dgram.AddressInfo
+    return this._addressInfo as AddressInfo
   }
 
   /**
@@ -466,7 +489,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
   addListener(event: 'close', listener: () => void): this
   addListener(event: 'error', listener: (err: Error) => void): this
   addListener(event: 'listening', listener: () => void): this
-  addListener(event: 'message', listener: (msg: string, rinfo: dgram.AddressInfo) => void): this
+  addListener(event: 'message', listener: (msg: string, rinfo: AddressInfo) => void): this
   addListener(event: string, listener: Function): this {
     return super.addListener(event, listener)
   }
@@ -475,7 +498,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
   emit(event: 'close'): boolean
   emit(event: 'error', err: Error): boolean
   emit(event: 'listening'): boolean
-  emit(event: 'message', msg: string, rinfo: dgram.AddressInfo): boolean
+  emit(event: 'message', msg: string, rinfo: AddressInfo): boolean
   emit(event: string, ...args: any[]): boolean {
     return super.emit(event, args)
   }
@@ -484,7 +507,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
   on(event: 'close', listener: () => void): this
   on(event: 'error', listener: (err: Error) => void): this
   on(event: 'listening', listener: () => void): this
-  on(event: 'message', listener: (msg: string, rinfo: dgram.AddressInfo) => void): this
+  on(event: 'message', listener: (msg: string, rinfo: AddressInfo) => void): this
   on(event: string, listener: Function): this {
     return super.on(event, listener)
   }
@@ -493,7 +516,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
   once(event: 'close', listener: () => void): this
   once(event: 'error', listener: (err: Error) => void): this
   once(event: 'listening', listener: () => void): this
-  once(event: 'message', listener: (msg: string, rinfo: dgram.AddressInfo) => void): this
+  once(event: 'message', listener: (msg: string, rinfo: AddressInfo) => void): this
   once(event: string, listener: Function): this {
     return super.once(event, listener)
   }
@@ -502,7 +525,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
   prependListener(event: 'close', listener: () => void): this
   prependListener(event: 'error', listener: (err: Error) => void): this
   prependListener(event: 'listening', listener: () => void): this
-  prependListener(event: 'message', listener: (msg: string, rinfo: dgram.AddressInfo) => void): this
+  prependListener(event: 'message', listener: (msg: string, rinfo: AddressInfo) => void): this
   prependListener(event: string, listener: Function): this {
     return super.prependListener(event, listener)
   }
@@ -511,7 +534,7 @@ export class Socket extends EventEmitter implements dgram.Socket {
   prependOnceListener(event: 'close', listener: () => void): this
   prependOnceListener(event: 'error', listener: (err: Error) => void): this
   prependOnceListener(event: 'listening', listener: () => void): this
-  prependOnceListener(event: 'message', listener: (msg: string, rinfo: dgram.AddressInfo) => void): this
+  prependOnceListener(event: 'message', listener: (msg: string, rinfo: AddressInfo) => void): this
   prependOnceListener(event: string, listener: Function): this {
     return super.prependOnceListener(event, listener)
   }

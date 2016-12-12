@@ -4,7 +4,7 @@
 /// <reference types='chrome/chrome-app'/>
 
 let Buffer = require('buffer/').Buffer
-import {Socket} from './Socket'
+import {Socket, RemoteInfo, SocketOptions} from './Socket'
 
 /**
  * Creates a Socket object of the specified type.
@@ -13,7 +13,7 @@ import {Socket} from './Socket'
  * @param callback An optional callback function can be passed which is added as
  *                 a listener for 'message' events.
  */
-function createSocket(type: string, callback?: (msg: Buffer, rinfo: dgram.RemoteInfo) => void): Socket
+function createSocket(type: string, callback?: (msg: Buffer, rinfo: RemoteInfo) => void): Socket
 
 /**
  * Creates a dgram.Socket object. Once the socket is created, calling
@@ -32,9 +32,9 @@ function createSocket(type: string, callback?: (msg: Buffer, rinfo: dgram.Remote
  *                          specified which is added as a listener for 'message'
  *                          events.
  */
-function createSocket(options: dgram.SocketOptions, callback?: (msg: Buffer, rinfo: dgram.RemoteInfo) => void): Socket
+function createSocket(options: SocketOptions, callback?: (msg: Buffer, rinfo: RemoteInfo) => void): Socket
 
-function createSocket(typeOrOptions: string | dgram.SocketOptions, callback?: (msg: Buffer, rinfo: dgram.RemoteInfo) => void): Socket {
+function createSocket(typeOrOptions: string | SocketOptions, callback?: (msg: Buffer, rinfo: RemoteInfo) => void): Socket {
   let type: 'udp4' | 'udp6', reuseAddr: boolean = false
 
   if (typeof typeOrOptions === 'string') {

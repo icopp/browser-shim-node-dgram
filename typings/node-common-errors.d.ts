@@ -22,12 +22,33 @@ declare module 'node-common-errors' {
         constructor(entityName: string, inner_error?: Error)
     }
 
+    /**
+     * Applicable when a resource is already in use, for example unique key
+     * constraints like a username.
+     *
+     * @example throw new errors.AlreadyInUseError('user', 'username')
+     */
     export class AlreadyInUseError extends Error {
+        /*
+         * @param entityName the entity that owns the protected resource
+         * @param args       the fields or attributes that are already in use
+         */
         constructor(entityName: string, ...args: string[])
     }
 
+    /**
+     * Applicable when there's a generic problem with an argument received by a
+     * function call.
+     *
+     * @example throw new errors.ArgumentError('username', err)
+     */
     export class ArgumentError extends Error {
-        constructor(argumentName: string, inner_error?: Error)
+        /*
+         * @param argumentName the name of the argument that has a problem
+         * @param inner_error  the Error instance that caused the current error.
+         *                     Stack trace will be appended.
+         */
+        constructor (argumentName: string, inner_error?: Error)
     }
 
     export class ArgumentNullError extends Error {
