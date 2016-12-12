@@ -1,6 +1,6 @@
 {
   "name": "browser-shim-node-dgram",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A browser shim for node's dgram.",
   "main": "built/index.js",
   "typings": "built/index.d.ts",
@@ -17,6 +17,7 @@
     "@types/firefox": "0.0.28",
     "bowser": "^1.6.0",
     "buffer": "^5.0.2",
+    "events": "^1.1.1",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^1.9.1",
     "gulp-typescript": "^3.1.3",

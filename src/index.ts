@@ -1,9 +1,8 @@
 /// <reference path='../typings/chrome.d.ts'/>
 /// <reference path='../typings/firefox.d.ts'/>
-/// <reference path='../node_modules/@types/node/index.d.ts'/>
 /// <reference types='chrome/chrome-app'/>
 
-let Buffer = require('buffer/').Buffer
+const {Buffer} = require('buffer/')
 import {Socket, RemoteInfo, SocketOptions} from './Socket'
 
 /**
