@@ -1,6 +1,6 @@
 {
   "name": "browser-shim-node-dgram",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A browser shim for node's dgram.",
   "contributors": [{
     "name": "Ian Copp",
