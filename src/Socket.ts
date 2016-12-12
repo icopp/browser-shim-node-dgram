@@ -1,6 +1,5 @@
 /// <reference path='../typings/chrome.d.ts'/>
 /// <reference path='../typings/node-common-errors.d.ts'/>
-/// <reference types='node'/>
 
 import {EventEmitter} from 'events'
 import * as bowser from 'bowser'
@@ -68,11 +67,6 @@ export class Socket extends EventEmitter {
   private _firefoxSocket: navigator.UDPSocket | null = null
 
   private _addressInfo: AddressInfo | null = null
-  private _selfBroadcast: boolean = false
-  private _selfMulticast: boolean = false
-
-  private _ttl: number | null = null
-  private _multicastTtl: number | null = null
 
   /**
    * Note that in Node's `dgram`, you're not supposed to ever do
